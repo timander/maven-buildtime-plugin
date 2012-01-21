@@ -18,25 +18,41 @@ package net.timandersen;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+
+import java.net.InetAddress;
 
 /**
  * Goal that reports the build time
  *
  * @goal stop
  * @phase verify
+ * @requiresOnline true
  */
 public class StopTimer extends AbstractMojo {
   /**
-   * The url to send the build time to.
+   * The stops build and reports elapsed time
    *
    * @parameter reportUrl=""
    */
   private String reportUrl;
 
   public void execute() throws MojoExecutionException {
-    getLog().info("####### Stopping timer!");
-    getLog().info("reportUrl = " + reportUrl);
-    getLog().info("elaspedTime = " + Stopwatch.elapsedTime());
+    try {
+      String computername = InetAddress.getLocalHost().getHostName();
+      MavenProject proj = (MavenProject) getPluginContext().get("project");
+      getLog().info("####### Stopping timer!");
+      getLog().info("elaspedTime = " + Stopwatch.elapsedTime());
+      if (reportUrl != null && reportUrl != "") {
+        getLog().info("Reporting = " + reportUrl +
+          "/" + computername +
+          "/" + proj.getName() +
+          "/" + proj.getVersion() +
+          "/" + Stopwatch.elapsedTime());
+      }
+    } catch (Exception e) {
+      getLog().error("Exception caught =" + e.getMessage());
+    }
   }
-
 }
+

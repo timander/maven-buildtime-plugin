@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  *
  * @goal start
  * @phase validate
+ * @requiresOnline true
  */
 public class StartTimer extends AbstractMojo {
 
