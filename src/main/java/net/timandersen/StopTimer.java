@@ -16,6 +16,8 @@ package net.timandersen;
  * limitations under the License.
  */
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -41,15 +43,20 @@ public class StopTimer extends AbstractMojo {
     try {
       String computername = InetAddress.getLocalHost().getHostName();
       MavenProject proj = (MavenProject) getPluginContext().get("project");
-      getLog().info("####### Stopping timer!");
-      getLog().info("elaspedTime = " + Stopwatch.elapsedTime());
-      if (reportUrl != null && reportUrl != "") {
-        getLog().info("Reporting = " + reportUrl +
-          "/" + computername +
-          "/" + proj.getName() +
-          "/" + proj.getVersion() +
-          "/" + Stopwatch.elapsedTime());
+      long elapsedTime = Stopwatch.elapsedTime();
+      String reportUrlWithParams = reportUrl +
+        "/" + computername +
+        "/" + proj.getName() +
+        "/" + proj.getVersion() +
+        "/" + elapsedTime;
+
+      getLog().info("##### Stopping timer! Elapsed Time ("+ elapsedTime +" ms)");
+      getLog().info(reportUrlWithParams);
+  
+      if (reportUrl != null && !reportUrl.equals("")) {
+        new HttpClient().executeMethod(new GetMethod(reportUrlWithParams));
       }
+
     } catch (Exception e) {
       getLog().error("Exception caught =" + e.getMessage());
     }

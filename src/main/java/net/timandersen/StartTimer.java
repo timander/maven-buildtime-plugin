@@ -29,7 +29,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class StartTimer extends AbstractMojo {
 
   public void execute() throws MojoExecutionException {
-    getLog().info("#####Starting Stopwatch!");
+    getLog().info("##### Starting Stopwatch!");
     Stopwatch.start();
   }
 
